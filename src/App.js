@@ -41,6 +41,11 @@ function App() {
     nationality: '',
     purpose: '',
   });
+  // New states for AI Visa Requirements
+  const [visaRequirementsResult, setVisaRequirementsResult] = useState('');
+  const [isVisaAiLoading, setIsVisaAiLoading] = useState(false);
+  const [visaAiError, setVisaAiError] = useState('');
+
 
   // Base WhatsApp link - Your phone number
   const baseWhatsappUrl = "https://wa.me/+201507000933?text=";
@@ -98,50 +103,51 @@ function App() {
 
   // Function to call Gemini API for AI trip planning
   const generateAiItinerary = async () => {
-  const { destination, days, interests } = aiTripDetails;
+    const { destination, days, interests } = aiTripDetails;
 
-  if (!destination || !days) {
-    setAiError('الرجاء إدخال الوجهة وعدد الأيام.');
-    return;
-  }
+    if (!destination || !days) {
+      setAiError('الرجاء إدخال الوجهة وعدد الأيام.');
+      return;
+    }
 
-  setIsAiLoading(true);
-  setAiItinerary('');
-  setAiError('');
+    setIsAiLoading(true);
+    setAiItinerary('');
+    setAiError('');
 
+    // Prompt updated to explicitly request Arabic
     const prompt = `Generate a detailed travel itinerary for a ${days}-day trip to ${destination}. Focus on ${interests || 'general sightseeing and culture'}. Provide daily activities, suggested meals, and key attractions. Format the response clearly, starting each day with 'اليوم X:' (Day X:) and **use Arabic language for the itinerary.**`;
 
-  let chatHistory = [];
-  chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+    let chatHistory = [];
+    chatHistory.push({ role: "user", parts: [{ text: prompt }] });
 
-  const payload = { contents: chatHistory };
-  const apiKey = ""; // Keep this line as is
-  const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+    const payload = { contents: chatHistory };
+    const apiKey = ""; // Leave as-is, Canvas will provide it at runtime.
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
-  try {
-    const response = await fetch(apiUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    const result = await response.json();
+    try {
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const result = await response.json();
 
-    if (result.candidates && result.candidates.length > 0 &&
-        result.candidates[0].content && result.candidates[0].content.parts &&
-        result.candidates[0].content.parts.length > 0) {
-      const text = result.candidates[0].content.parts[0].text;
-      setAiItinerary(text);
-    } else {
-      setAiError('لم يتمكن الذكاء الاصطناعي من توليد خطة الرحلة. يرجى المحاولة مرة أخرى.');
-      console.error('Gemini API response structure unexpected:', result);
+      if (result.candidates && result.candidates.length > 0 &&
+          result.candidates[0].content && result.candidates[0].content.parts &&
+          result.candidates[0].content.parts.length > 0) {
+        const text = result.candidates[0].content.parts[0].text;
+        setAiItinerary(text);
+      } else {
+        setAiError('لم يتمكن الذكاء الاصطناعي من توليد خطة الرحلة. يرجى المحاولة مرة أخرى.');
+        console.error('Gemini API response structure unexpected:', result);
+      }
+    } catch (error) {
+      setAiError('حدث خطأ أثناء الاتصال بالذكاء الاصطناعي. يرجى التحقق من اتصالك بالإنترنت والمحاولة مرة أخرى.');
+      console.error('Error calling Gemini API:', error);
+    } finally {
+      setIsAiLoading(false);
     }
-  } catch (error) {
-    setAiError('حدث خطأ أثناء الاتصال بالذكاء الاصطناعي. يرجى التحقق من اتصالك بالإنترنت والمحاولة مرة أخرى.');
-    console.error('Error calling Gemini API:', error);
-  } finally {
-    setIsAiLoading(false);
-  }
-};
+  };
 
   // Handle Visa form input changes
   const handleVisaChange = (e) => {
@@ -150,6 +156,9 @@ function App() {
       ...prevDetails,
       [name]: value,
     }));
+    // Clear AI visa result when input changes
+    setVisaRequirementsResult('');
+    setVisaAiError('');
   };
 
   // Handle Visa request submission to WhatsApp
@@ -163,71 +172,150 @@ function App() {
     window.open(`${baseWhatsappUrl}${encodeURIComponent(message)}`, '_blank');
   };
 
+  // Function to call Gemini API for AI Visa Requirements
+  const generateVisaRequirements = async () => {
+    const { nationality, country } = visaDetails;
+
+    if (!nationality || !country) {
+      setVisaAiError('الرجاء إدخال الجنسية والدولة المطلوبة.');
+      return;
+    }
+
+    setIsVisaAiLoading(true);
+    setVisaRequirementsResult('');
+    setVisaAiError('');
+
+    // Prompt updated to explicitly request Arabic
+    const prompt = `As a travel assistant, provide general visa requirements for a citizen of ${nationality} traveling to ${country}. Include typical required documents (e.g., passport validity, photos, application form, bank statements, invitation letter) and any common steps or considerations. State if a visa is generally required or not. **Format the response clearly in Arabic,** using bullet points for documents if applicable. Start with a clear statement like 'متطلبات التأشيرة لمواطني [الجنسية] للسفر إلى [الدولة]:'.`;
+
+    let chatHistory = [];
+    chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+
+    const payload = { contents: chatHistory };
+    const apiKey = ""; // Leave as-is, Canvas will provide it at runtime.
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+    try {
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const result = await response.json();
+
+      if (result.candidates && result.candidates.length > 0 &&
+          result.candidates[0].content && result.candidates[0].content.parts &&
+          result.candidates[0].content.parts.length > 0) {
+        const text = result.candidates[0].content.parts[0].text;
+        setVisaRequirementsResult(text);
+      } else {
+        setVisaAiError('لم يتمكن الذكاء الاصطناعي من توليد متطلبات التأشيرة. يرجى المحاولة مرة أخرى.');
+        console.error('Gemini API response structure unexpected:', result);
+      }
+    } catch (error) {
+      setVisaAiError('حدث خطأ أثناء الاتصال بالذكاء الاصطناعي. يرجى التحقق من اتصالك بالإنترنت والمحاولة مرة أخرى.');
+      console.error('Error calling Gemini API:', error);
+    } finally {
+      setIsVisaAiLoading(false);
+    }
+  };
+
+
   // Data for virtual trips in each section (Hajj & Umrah, Tourist Trips)
   const sections = {
     hajjUmrah: {
       title: 'الحج والعمرة',
       icon: <Landmark className="w-6 h-6 ml-2" />,
-      trips: [
+      // تغيير trips إلى suggestions هنا
+      suggestions: [
         {
-          title: 'رحلة عمرة اقتصادية - 7 أيام',
-          description: 'جدول الرحلة: اليوم الأول: الوصول إلى مكة والإحرام، اليوم الثاني: أداء العمرة، الأيام 3-5: العبادة في الحرم المكي، اليوم السادس: زيارة المعالم الدينية، اليوم السابع: المغادرة.',
-          image: 'https://placehold.co/400x250/8B5CF6/FFFFFF?text=عمرة+اقتصادية', // Image for economic Umrah
-          whatsappText: 'أود الاستفسار عن رحلة عمرة اقتصادية - 7 أيام',
+          title: 'العمرة: رحلة روحية خاصة',
+          description: 'خطط لرحلة عمرة تناسب ميزانيتك وجدولك الزمني. استكشف المرونة في حجز الفنادق والطيران، ودعنا نساعدك في كل التفاصيل.',
+          image: 'https://placehold.co/400x250/8B5CF6/FFFFFF?text=رحلة+عمرة',
         },
         {
-          title: 'رحلة عمرة مميزة - 10 أيام',
-          description: 'جدول الرحلة: الأيام 1-5: مكة المكرمة (عمرة، عبادة، زيارات)، الأيام 6-9: المدينة المنورة (زيارة المسجد النبوي، الروضة الشريفة، المواقع التاريخية)، اليوم العاشر: المغادرة.',
-          image: 'https://placehold.co/400x250/C084FC/FFFFFF?text=عمرة+مميزة', // Image for special Umrah
-          whatsappText: 'أود الاستفسار عن رحلة عمرة مميزة - 10 أيام',
+          title: 'الحج: فريضة العمر المقدسة',
+          description: 'استعد لأداء فريضة الحج بتخطيط مسبق ومريح. تعرف على البرامج المتاحة والخدمات التي نقدمها لتجربة لا تُنسى.',
+          image: 'https://placehold.co/400x250/A78BFA/FFFFFF?text=رحلة+حج',
         },
         {
-          title: 'برنامج الحج الشامل - 14 يوم',
-          description: 'جدول الرحلة: يشمل جميع مناسك الحج بالتفصيل، الإقامة في مخيمات مجهزة، وخدمات الإعاشة والنقل، بالإضافة إلى زيارات للمدينة المنورة بعد أداء المناسك.',
-          image: 'https://placehold.co/400x250/A78BFA/FFFFFF?text=برنامج+الحج', // Image for Hajj program
-          whatsappText: 'أود الاستفسار عن برنامج الحج الشامل - 14 يوم',
+          title: 'برامج زيارة الأماكن المقدسة',
+          description: 'نظم زياراتك إلى الأماكن التاريخية والإسلامية في مكة المكرمة والمدينة المنورة، بما يتناسب مع برنامجك.',
+          image: 'https://placehold.co/400x250/C084FC/FFFFFF?text=زيارات+مقدسة',
         },
       ],
+      // يمكنك إضافة قسم AI Planner هنا أو توجيههم للتواصل المباشر
+      // على سبيل المثال، لتوجيههم لواتساب للاستفسار عن برامج الحج والعمرة
+      whatsappContact: {
+        title: 'استفسر عن برامج الحج والعمرة',
+        description: 'للحصول على عروض خاصة أو برامج مخصصة للحج والعمرة، تواصل معنا مباشرة عبر واتساب.',
+        whatsappText: 'أود الاستفسار عن برامج الحج والعمرة المخصصة.',
+        image: 'https://placehold.co/400x250/663399/FFFFFF?text=تواصل+حج+عمرة', // صورة جديدة للتواصل
+      }
     },
     touristTrips: {
       title: 'رحلات سياحية',
       icon: <Globe className="w-6 h-6 ml-2" />,
-      trips: [
+      trips: [ // 10 رحلات سياحية محددة
         {
-          title: 'اسطنبول الساحرة، تركيا - 5 أيام',
-          description: 'استكشاف آيا صوفيا، المسجد الأزرق، البازار الكبير، ومضيق البوسفور.',
-          image: 'https://placehold.co/400x250/FF7F50/FFFFFF?text=اسطنبول', // Image of Istanbul
-          whatsappText: 'أود الاستفسار عن رحلة اسطنبول الساحرة، تركيا - 5 أيام',
+          title: 'دبي الساحرة، الإمارات - 4 أيام',
+          description: 'استمتع بناطحات السحاب، التسوق الفاخر، الصحراء، والأنشطة الترفيهية.',
+          image: 'https://placehold.co/400x250/FF7F50/FFFFFF?text=دبي',
+          whatsappText: 'أود الاستفسار عن رحلة دبي الساحرة - 4 أيام',
         },
         {
-          title: 'جمال تبليسي، جورجيا - 4 أيام',
-          description: 'جولة في المدينة القديمة، قلعة ناريكالا، جبال القوقاز الخضراء.',
-          image: 'https://placehold.co/400x250/6A5ACD/FFFFFF?text=تبليسي', // Image of Tbilisi
-          whatsappText: 'أود الاستفسار عن رحلة جمال تبليسي، جورجيا - 4 أيام',
+          title: 'إسطنبول التاريخية، تركيا - 5 أيام',
+          description: 'استكشاف آيا صوفيا، المسجد الأزرق، البازار الكبير، ومضيق البوسفور.',
+          image: 'https://placehold.co/400x250/6A5ACD/FFFFFF?text=إسطنبول',
+          whatsappText: 'أود الاستفسار عن رحلة إسطنبول التاريخية - 5 أيام',
         },
         {
           title: 'بالي الاستوائية، إندونيسيا - 7 أيام',
           description: 'استرخاء على الشواطئ، زيارة المعابد، الغوص، والتمتع بالطبيعة الخلابة.',
-          image: 'https://placehold.co/400x250/20B2AA/FFFFFF?text=بالي', // Image of Bali
-          whatsappText: 'أود الاستفسار عن رحلة بالي الاستوائية، إندونيسيا - 7 أيام',
+          image: 'https://placehold.co/400x250/20B2AA/FFFFFF?text=بالي',
+          whatsappText: 'أود الاستفسار عن رحلة بالي الاستوائية - 7 أيام',
         },
         {
           title: 'كوالالمبور الحديثة، ماليزيا - 6 أيام',
           description: 'برجاي التوأم، حدائق البحيرة، كهوف باتو، وتسوق لا يُنسى.',
-          image: 'https://placehold.co/400x250/FFD700/FFFFFF?text=كوالالمبور', // Image of Kuala Lumpur
-          whatsappText: 'أود الاستفسار عن رحلة كوالالمبور الحديثة، ماليزيا - 6 أيام',
+          image: 'https://placehold.co/400x250/FFD700/FFFFFF?text=كوالالمبور',
+          whatsappText: 'أود الاستفسار عن رحلة كوالالمبور الحديثة - 6 أيام',
         },
         {
           title: 'باريس الرومانسية، فرنسا - 5 أيام',
           description: 'برج إيفل، متحف اللوفر، كاتدرائية نوتردام، وشارع الشانزليزيه.',
-          image: 'https://eg.visamiddleeast.com/content/dam/VCOM/regional/cemea/generic-cemea/travel-with-visa/destinations/paris/marquee-travel-paris-800x450.jpg', // Image of Paris
-          whatsappText: 'أود الاستفسار عن رحلة باريس الرومانسية، فرنسا - 5 أيام',
+          image: 'https://placehold.co/400x250/FF6347/FFFFFF?text=باريس',
+          whatsappText: 'أود الاستفسار عن رحلة باريس الرومانسية - 5 أيام',
         },
         {
           title: 'روما التاريخية، إيطاليا - 6 أيام',
           description: 'الكولوسيوم، نافورة تريفي، الفاتيكان، وتذوق أشهى المأكولات الإيطالية.',
-          image: 'https://placehold.co/400x250/4682B4/FFFFFF?text=روما', // Image of Rome
-          whatsappText: 'أود الاستفسار عن رحلة روما التاريخية، إيطاليا - 6 أيام',
+          image: 'https://placehold.co/400x250/4682B4/FFFFFF?text=روما',
+          whatsappText: 'أود الاستفسار عن رحلة روما التاريخية - 6 أيام',
+        },
+        {
+          title: 'سنغافورة المتطورة - 4 أيام',
+          description: 'حدائق الخليج، جزيرة سنتوسا، وتسوق عالمي في مدينة المستقبل.',
+          image: 'https://placehold.co/400x250/A2DA99/FFFFFF?text=سنغافورة',
+          whatsappText: 'أود الاستفسار عن رحلة سنغافورة المتطورة - 4 أيام',
+        },
+        {
+          title: 'طوكيو النابضة، اليابان - 7 أيام',
+          description: 'مدينة تجمع بين التقاليد العريقة والتكنولوجيا الحديثة، مع حدائق جميلة.',
+          image: 'https://placehold.co/400x250/D2B48C/FFFFFF?text=طوكيو',
+          whatsappText: 'أود الاستفسار عن رحلة طوكيو النابضة - 7 أيام',
+        },
+        {
+          title: 'جزر المالديف الساحرة - 5 أيام',
+          description: 'استرخاء في منتجعات فاخرة فوق الماء، غوص ورياضات مائية في جنة استوائية.',
+          image: 'https://placehold.co/400x250/87CEEB/FFFFFF?text=المالديف',
+          whatsappText: 'أود الاستفسار عن رحلة جزر المالديف الساحرة - 5 أيام',
+        },
+        {
+          title: 'القاهرة الفاطمية، مصر - 3 أيام',
+          description: 'الأهرامات، خان الخليلي، المتحف المصري، رحلة نيلية، وتذوق الطعام المصري الأصيل.',
+          image: 'https://placehold.co/400x250/E6B3B3/FFFFFF?text=القاهرة',
+          whatsappText: 'أود الاستفسار عن رحلة القاهرة الفاطمية - 3 أيام',
         },
       ],
       // Add a special entry for the AI Planner within touristTrips
@@ -489,6 +577,40 @@ function App() {
             <MessageSquare className="w-5 h-5 ml-2" />
             أرسل طلب التأشيرة عبر واتساب
           </button>
+
+          {/* AI Visa Requirements Section */}
+          <div className="mt-8 pt-6 border-t border-gray-200">
+            <h4 className="text-xl font-semibold text-purple-700 mb-4 text-center">✨ مساعد متطلبات التأشيرة بالذكاء الاصطناعي</h4>
+            <p className="text-center text-gray-600 mb-4">احصل على معلومات عامة حول متطلبات التأشيرة بناءً على جنسيتك ووجهتك.</p>
+            <div className="flex justify-center">
+              <button
+                onClick={generateVisaRequirements}
+                className="bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 transition-colors duration-300 flex items-center justify-center font-medium"
+                disabled={isVisaAiLoading}
+              >
+                {isVisaAiLoading ? (
+                  <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                ) : (
+                  <Sparkles className="w-5 h-5 ml-2" />
+                )}
+                {isVisaAiLoading ? 'جاري البحث...' : 'احصل على المتطلبات'}
+              </button>
+            </div>
+
+            {visaAiError && (
+              <p className="text-red-600 text-sm mt-3 text-center">{visaAiError}</p>
+            )}
+
+            {visaRequirementsResult && (
+              <div className="mt-4 p-3 bg-white rounded-lg border border-purple-200 text-gray-800 text-sm whitespace-pre-wrap max-h-60 overflow-y-auto">
+                <h4 className="font-semibold text-purple-700 mb-2">متطلبات التأشيرة المقترحة:</h4>
+                {visaRequirementsResult}
+              </div>
+            )}
+          </div>
         </div>
       ),
     },
@@ -628,8 +750,51 @@ function App() {
               </div>
             )}
 
-            {/* Existing Virtual Trips */}
-            {sections[activeSection].trips.map((trip, index) => (
+            {/* Display suggestions for Hajj & Umrah, and trips for Tourist Trips */}
+            {activeSection === 'hajjUmrah' && sections.hajjUmrah.suggestions && sections.hajjUmrah.suggestions.map((suggestion, index) => (
+              <div key={index} className="bg-gray-50 rounded-lg shadow-md overflow-hidden transform transition-transform duration-300 hover:scale-105">
+                <img
+                  src={suggestion.image}
+                  alt={suggestion.title}
+                  className="w-full h-40 object-cover"
+                  onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/400x250/CCCCCC/000000?text=صورة+غير+متوفرة`; }}
+                />
+                <div className="p-4">
+                  <h3 className="text-xl font-semibold text-indigo-800 mb-2">{suggestion.title}</h3>
+                  <p className="text-gray-700 text-sm">{suggestion.description}</p>
+                  {/* لا يوجد زر تواصل مباشر هنا، نعتمد على زر التواصل العام أو اقتراح التواصل مع واتساب */}
+                </div>
+              </div>
+            ))}
+
+            {/* Display the general WhatsApp contact card for Hajj & Umrah */}
+            {activeSection === 'hajjUmrah' && sections.hajjUmrah.whatsappContact && (
+              <div className="bg-green-100 rounded-lg shadow-md overflow-hidden transform transition-transform duration-300 hover:scale-105 border-2 border-green-400">
+                <img
+                  src={sections.hajjUmrah.whatsappContact.image}
+                  alt={sections.hajjUmrah.whatsappContact.title}
+                  className="w-full h-40 object-cover"
+                  onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/400x250/CCCCCC/000000?text=صورة+غير+متوفرة`; }}
+                />
+                <div className="p-4">
+                  <h3 className="text-xl font-semibold text-green-800 mb-2">{sections.hajjUmrah.whatsappContact.title}</h3>
+                  <p className="text-gray-700 text-sm mb-4">{sections.hajjUmrah.whatsappContact.description}</p>
+                  <a
+                    href={`${baseWhatsappUrl}${encodeURIComponent(sections.hajjUmrah.whatsappContact.whatsappText)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition-colors duration-300 flex items-center justify-center font-medium"
+                  >
+                    <MessageSquare className="w-5 h-5 ml-2" />
+                    تواصل عبر واتساب
+                  </a>
+                </div>
+              </div>
+            )}
+
+
+            {/* Display specific trips for Tourist Trips */}
+            {activeSection === 'touristTrips' && sections.touristTrips.trips && sections.touristTrips.trips.map((trip, index) => (
               <div key={index} className="bg-gray-50 rounded-lg shadow-md overflow-hidden transform transition-transform duration-300 hover:scale-105">
                 <img
                   src={trip.image}

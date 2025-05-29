@@ -98,50 +98,50 @@ function App() {
 
   // Function to call Gemini API for AI trip planning
   const generateAiItinerary = async () => {
-    const { destination, days, interests } = aiTripDetails;
+  const { destination, days, interests } = aiTripDetails;
 
-    if (!destination || !days) {
-      setAiError('الرجاء إدخال الوجهة وعدد الأيام.');
-      return;
+  if (!destination || !days) {
+    setAiError('الرجاء إدخال الوجهة وعدد الأيام.');
+    return;
+  }
+
+  setIsAiLoading(true);
+  setAiItinerary('');
+  setAiError('');
+
+    const prompt = `Generate a detailed travel itinerary for a ${days}-day trip to ${destination}. Focus on ${interests || 'general sightseeing and culture'}. Provide daily activities, suggested meals, and key attractions. Format the response clearly, starting each day with 'اليوم X:' (Day X:) and **use Arabic language for the itinerary.**`;
+
+  let chatHistory = [];
+  chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+
+  const payload = { contents: chatHistory };
+  const apiKey = ""; // Keep this line as is
+  const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+  try {
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const result = await response.json();
+
+    if (result.candidates && result.candidates.length > 0 &&
+        result.candidates[0].content && result.candidates[0].content.parts &&
+        result.candidates[0].content.parts.length > 0) {
+      const text = result.candidates[0].content.parts[0].text;
+      setAiItinerary(text);
+    } else {
+      setAiError('لم يتمكن الذكاء الاصطناعي من توليد خطة الرحلة. يرجى المحاولة مرة أخرى.');
+      console.error('Gemini API response structure unexpected:', result);
     }
-
-    setIsAiLoading(true);
-    setAiItinerary('');
-    setAiError('');
-
-    const prompt = `Generate a detailed travel itinerary for a ${days}-day trip to ${destination}. Focus on ${interests || 'general sightseeing and culture'}. Provide daily activities, suggested meals, and key attractions. Format the response clearly, starting each day with 'اليوم X:' (Day X:) and use Arabic language for the itinerary.`;
-
-    let chatHistory = [];
-    chatHistory.push({ role: "user", parts: [{ text: prompt }] });
-
-    const payload = { contents: chatHistory };
-    const apiKey = "AIzaSyCAbACWBa49G-rAqEtl1nC6Oe2pdrhhBpI"; // Leave as-is, Canvas will provide it at runtime.
-    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-
-    try {
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      const result = await response.json();
-
-      if (result.candidates && result.candidates.length > 0 &&
-          result.candidates[0].content && result.candidates[0].content.parts &&
-          result.candidates[0].content.parts.length > 0) {
-        const text = result.candidates[0].content.parts[0].text;
-        setAiItinerary(text);
-      } else {
-        setAiError('لم يتمكن الذكاء الاصطناعي من توليد خطة الرحلة. يرجى المحاولة مرة أخرى.');
-        console.error('Gemini API response structure unexpected:', result);
-      }
-    } catch (error) {
-      setAiError('حدث خطأ أثناء الاتصال بالذكاء الاصطناعي. يرجى التحقق من اتصالك بالإنترنت والمحاولة مرة أخرى.');
-      console.error('Error calling Gemini API:', error);
-    } finally {
-      setIsAiLoading(false);
-    }
-  };
+  } catch (error) {
+    setAiError('حدث خطأ أثناء الاتصال بالذكاء الاصطناعي. يرجى التحقق من اتصالك بالإنترنت والمحاولة مرة أخرى.');
+    console.error('Error calling Gemini API:', error);
+  } finally {
+    setIsAiLoading(false);
+  }
+};
 
   // Handle Visa form input changes
   const handleVisaChange = (e) => {

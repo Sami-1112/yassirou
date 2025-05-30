@@ -121,7 +121,7 @@ function App() {
     chatHistory.push({ role: "user", parts: [{ text: prompt }] });
 
     const payload = { contents: chatHistory };
-    const apiKey = "AIzaSyCAbACWBa49G-rAqEtl1nC6Oe2pdrhhBpI"; // Leave as-is, Canvas will provide it at runtime.
+    const apiKey = "AIzaSyAmJz_L-k2uwf8Xj8GUZzQ9_h_UFaRIbDE"; // Leave as-is, Canvas will provide it at runtime.
     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
     try {
@@ -192,7 +192,7 @@ function App() {
     chatHistory.push({ role: "user", parts: [{ text: prompt }] });
 
     const payload = { contents: chatHistory };
-    const apiKey = "AIzaSyCAbACWBa49G-rAqEtl1nC6Oe2pdrhhBpI"; // Leave as-is, Canvas will provide it at runtime.
+    const apiKey = "AIzaSyAmJz_L-k2uwf8Xj8GUZzQ9_h_UFaRIbDE"; // Leave as-is, Canvas will provide it at runtime.
     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
     try {

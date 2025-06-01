@@ -1,4 +1,3 @@
-// src/forms/FlightBookingForm.js
 import React, { useState } from 'react';
 import { MessageSquare } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
@@ -29,27 +28,33 @@ const FlightBookingForm = () => {
       return;
     }
 
-    let message = `${t.flightBooking.whatsappText}%0A`; // بداية الرسالة
+    let messageParts = []; // سنجمع أجزاء الرسالة هنا
+
+    messageParts.push(t.flightBooking.whatsappText); // بداية الرسالة
 
     // إضافة التفاصيل فقط إذا كانت موجودة
     if (flightDetails.departure) {
-      message += `${t.flightBooking.departureCity} ${flightDetails.departure}%0A`;
+      messageParts.push(`${t.flightBooking.departureCity}: ${flightDetails.departure}`);
     }
     if (flightDetails.arrival) {
-      message += `${t.flightBooking.arrivalCity} ${flightDetails.arrival}%0A`;
+      messageParts.push(`${t.flightBooking.arrivalCity}: ${flightDetails.arrival}`);
     }
     if (flightDetails.departureDate) {
-      message += `${t.flightBooking.departureDate} ${flightDetails.departureDate}%0A`;
+      messageParts.push(`${t.flightBooking.departureDate}: ${flightDetails.departureDate}`);
     }
     if (flightDetails.returnDate) { // هذا الحقل اختياري
-      message += `${t.flightBooking.returnDate} ${flightDetails.returnDate}%0A`;
+      messageParts.push(`${t.flightBooking.returnDate} (اختياري): ${flightDetails.returnDate}`); // تعديل بسيط للنص
     }
     // عدد الركاب دائماً موجود بقيمة افتراضية 1
-    message += `${t.flightBooking.passengers} ${flightDetails.passengers}%0A`;
+    messageParts.push(`${t.flightBooking.passengers}: ${flightDetails.passengers}`);
 
-    message += `%0A${t.general.contactUs}.`; // إضافة جملة التواصل في النهاية
+    messageParts.push(''); // سطر فارغ للفصل
+    messageParts.push(t.general.contactUs); // إضافة جملة التواصل في النهاية
 
-    window.open(`${baseWhatsappUrl}${encodeURIComponent(message)}`, '_blank');
+    // دمج الأجزاء معًا باستخدام %0A (سطر جديد) بعد تشفير كل جزء
+    const finalMessage = messageParts.map(part => encodeURIComponent(part)).join('%0A');
+
+    window.open(`${baseWhatsappUrl}${finalMessage}`, '_blank');
     showMessage('success', 'تم إرسال طلب حجز الطيران بنجاح!');
   };
 

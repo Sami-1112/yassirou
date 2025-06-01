@@ -1,4 +1,3 @@
-// src/forms/HotelBookingForm.js
 import React, { useState } from 'react';
 import { MessageSquare } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
@@ -29,23 +28,28 @@ const HotelBookingForm = () => {
       return;
     }
 
-    let message = `${t.hotelBooking.whatsappText}%0A`;
+    let messageParts = [];
+
+    messageParts.push(t.hotelBooking.whatsappText);
 
     if (hotelDetails.destination) {
-      message += `${t.hotelBooking.destinationCity} ${hotelDetails.destination}%0A`;
+      messageParts.push(`${t.hotelBooking.destinationCity}: ${hotelDetails.destination}`);
     }
     if (hotelDetails.checkInDate) {
-      message += `${t.hotelBooking.checkInDate} ${hotelDetails.checkInDate}%0A`;
+      messageParts.push(`${t.hotelBooking.checkInDate}: ${hotelDetails.checkInDate}`);
     }
     if (hotelDetails.checkOutDate) {
-      message += `${t.hotelBooking.checkOutDate} ${hotelDetails.checkOutDate}%0A`;
+      messageParts.push(`${t.hotelBooking.checkOutDate}: ${hotelDetails.checkOutDate}`);
     }
-    message += `${t.hotelBooking.guests} ${hotelDetails.guests}%0A`; // الضيوف والغرف دائماً لهم قيمة افتراضية
-    message += `${t.hotelBooking.rooms} ${hotelDetails.rooms}%0A`;
+    messageParts.push(`${t.hotelBooking.guests}: ${hotelDetails.guests}`);
+    messageParts.push(`${t.hotelBooking.rooms}: ${hotelDetails.rooms}`);
 
-    message += `%0A${t.general.contactUs}.`;
+    messageParts.push(''); // سطر فارغ للفصل
+    messageParts.push(t.general.contactUs);
 
-    window.open(`${baseWhatsappUrl}${encodeURIComponent(message)}`, '_blank');
+    const finalMessage = messageParts.map(part => encodeURIComponent(part)).join('%0A');
+
+    window.open(`${baseWhatsappUrl}${finalMessage}`, '_blank');
     showMessage('success', 'تم إرسال طلب حجز الفندق بنجاح!');
   };
 

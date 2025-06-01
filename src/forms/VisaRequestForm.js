@@ -1,4 +1,3 @@
-// src/forms/VisaRequestForm.js
 import React, { useState } from 'react';
 import { MessageSquare, Sparkles } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
@@ -34,24 +33,29 @@ const VisaRequestForm = () => {
       return;
     }
     
-    let message = `${t.visas.whatsappText}%0A`;
+    let messageParts = [];
+
+    messageParts.push(t.visas.whatsappText);
 
     if (visaDetails.country) {
-      message += `${t.visas.country}: ${visaDetails.country}%0A`;
+      messageParts.push(`${t.visas.country}: ${visaDetails.country}`);
     }
     if (visaDetails.visaType) { // حقل اختياري
-      message += `${t.visas.visaType}: ${visaDetails.visaType}%0A`;
+      messageParts.push(`${t.visas.visaType}: ${visaDetails.visaType}`);
     }
     if (visaDetails.nationality) {
-      message += `${t.visas.nationality}: ${visaDetails.nationality}%0A`;
+      messageParts.push(`${t.visas.nationality}: ${visaDetails.nationality}`);
     }
     if (visaDetails.purpose) { // حقل اختياري
-      message += `${t.visas.purpose}: ${visaDetails.purpose}%0A`;
+      messageParts.push(`${t.visas.purpose}: ${visaDetails.purpose}`);
     }
     
-    message += `%0A${t.general.contactUs}.`;
+    messageParts.push(''); // سطر فارغ للفصل
+    messageParts.push(t.general.contactUs);
 
-    window.open(`${baseWhatsappUrl}${encodeURIComponent(message)}`, '_blank');
+    const finalMessage = messageParts.map(part => encodeURIComponent(part)).join('%0A');
+
+    window.open(`${baseWhatsappUrl}${finalMessage}`, '_blank');
     showMessage('success', 'تم إرسال طلب التأشيرة بنجاح!');
   };
 

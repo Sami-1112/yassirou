@@ -42,9 +42,9 @@ const FlightBookingForm = () => {
     if (flightDetails.departureDate) {
       messageParts.push(`${t.flightBooking.departureDate}: ${flightDetails.departureDate}`);
     }
-    if (flightDetails.returnDate) { // هذا الحقل اختياري
-      messageParts.push(`${t.flightBooking.returnDate} (اختياري): ${flightDetails.returnDate}`); // تعديل بسيط للنص
-    }
+    if (flightDetails.returnDate) {
+  messageParts.push(`${t.flightBooking.returnDate}: ${flightDetails.returnDate}`);
+}
     // عدد الركاب دائماً موجود بقيمة افتراضية 1
     messageParts.push(`${t.flightBooking.passengers}: ${flightDetails.passengers}`);
 

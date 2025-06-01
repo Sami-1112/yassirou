@@ -1,24 +1,20 @@
-// src/components/Header.js
-import React from 'react';
-import { useAppContext } from '../context/AppContext';
+import React from "react";
+import { useLocale } from "../hooks/useLocale";
 
-const Header = () => {
-  const { t, toggleLocale, locale } = useAppContext();
-
+export default function Header() {
+  const { t, switchLocale } = useLocale();
   return (
-    <header className="w-full max-w-4xl bg-white shadow-lg rounded-xl p-6 mb-8 text-center relative">
-      <h1 className="text-4xl sm:text-5xl font-bold text-indigo-700 mb-2">
-        {t.appName}
-      </h1>
-      <p className="text-lg text-gray-600">{t.appSlogan}</p>
-      <button
-        onClick={toggleLocale}
-        className="absolute top-4 right-4 bg-gray-200 text-gray-700 hover:bg-gray-300 px-3 py-1.5 rounded-full text-sm font-medium transition-colors duration-200"
-      >
-        {locale === 'ar' ? 'English' : 'العربية'}
-      </button>
+    <header className="w-full max-w-4xl bg-white rounded-xl p-6 mb-8 text-center shadow-lg flex flex-col items-center">
+      <div className="flex w-full justify-between mb-2">
+        <span className="text-2xl font-bold text-indigo-700">{t.appTitle}</span>
+        <button
+          className="rounded-full px-4 py-1 bg-indigo-100 hover:bg-indigo-200 text-indigo-800 font-medium shadow"
+          onClick={switchLocale}
+        >
+          {t.langSwitch}
+        </button>
+      </div>
+      <p className="text-lg text-gray-600">{t.appSubtitle}</p>
     </header>
   );
-};
-
-export default Header;
+}

@@ -1,3 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&family=Inter:wght@400;700&display=swap');
+
+body, html {
+  font-family: 'Tajawal', 'Inter', Arial, sans-serif !important;
+  background: none !important;
+}
+
+.input {
+  @apply shadow border rounded-lg w-full py-2 px-3 text-gray-700 dark:text-gray-100 bg-white dark:bg-[#19182d] leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-500 transition;
+}
 /* src/index.css */
 @tailwind base;
 @tailwind components;

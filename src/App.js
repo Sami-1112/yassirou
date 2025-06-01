@@ -61,12 +61,18 @@ function App() {
 
   // Handle flight request submission to WhatsApp
   const handleFlightRequest = () => {
-    const message = `طلب حجز طيران جديد:` +
-                    `المغادرة: ${flightDetails.departure || 'لم يتم الإدخال'}` +
-                    `الوصول: ${flightDetails.arrival || 'لم يتم الإدخال'}` +
-                    `تاريخ المغادرة: ${flightDetails.departureDate || 'لم يتم الإدخال'}` +
-                    `تاريخ العودة: ${flightDetails.returnDate || 'لا يوجد'}` +
-                    `عدد الركاب: ${flightDetails.passengers || '1'}` +
+    const message = `طلب حجز طيران جديد:` + 
+
+                    `المغادرة: ${flightDetails.departure || 'لم يتم الإدخال'}` + 
+
+                    `الوصول: ${flightDetails.arrival || 'لم يتم الإدخال'}` + 
+
+                    `تاريخ المغادرة: ${flightDetails.departureDate || 'لم يتم الإدخال'}` + 
+
+                    `تاريخ العودة: ${flightDetails.returnDate || 'لا يوجد'}` + 
+
+                    `عدد الركاب: ${flightDetails.passengers || '1'}` + 
+                    
                     `يرجى التواصل معي لإتمام الحجز.`;
     window.open(`${baseWhatsappUrl}${encodeURIComponent(message)}`, '_blank');
   };

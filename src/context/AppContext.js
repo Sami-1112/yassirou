@@ -1,7 +1,9 @@
 // src/context/AppContext.js
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import translations from '../locales'; // استيراد ملفات الترجمة
+import ar from '../locales/ar';
+import en from '../locales/en';
 
+const translations = { ar, en }; // دمج الترجمات في كائن واحد
 // إنشاء Context
 const AppContext = createContext();
 

@@ -61,13 +61,13 @@ function App() {
 
   // Handle flight request submission to WhatsApp
   const handleFlightRequest = () => {
-    const message = `طلب حجز طيران جديد:%0A` +
-                    `المغادرة: ${flightDetails.departure || 'لم يتم الإدخال'}%0A` +
-                    `الوصول: ${flightDetails.arrival || 'لم يتم الإدخال'}%0A` +
-                    `تاريخ المغادرة: ${flightDetails.departureDate || 'لم يتم الإدخال'}%0A` +
-                    `تاريخ العودة: ${flightDetails.returnDate || 'لا يوجد'}%0A` +
-                    `عدد الركاب: ${flightDetails.passengers || '1'}%0A` +
-                    `%0Aيرجى التواصل معي لإتمام الحجز.`;
+    const message = `طلب حجز طيران جديد:` +
+                    `المغادرة: ${flightDetails.departure || 'لم يتم الإدخال'}` +
+                    `الوصول: ${flightDetails.arrival || 'لم يتم الإدخال'}` +
+                    `تاريخ المغادرة: ${flightDetails.departureDate || 'لم يتم الإدخال'}` +
+                    `تاريخ العودة: ${flightDetails.returnDate || 'لا يوجد'}` +
+                    `عدد الركاب: ${flightDetails.passengers || '1'}` +
+                    `يرجى التواصل معي لإتمام الحجز.`;
     window.open(`${baseWhatsappUrl}${encodeURIComponent(message)}`, '_blank');
   };
 
@@ -83,12 +83,12 @@ function App() {
   // Handle hotel request submission to WhatsApp
   const handleHotelRequest = () => {
     const message = `طلب حجز فندق جديد:%0A` +
-                    `الوجهة: ${hotelDetails.destination || 'لم يتم الإدخال'}%0A` +
-                    `تاريخ الدخول: ${hotelDetails.checkInDate || 'لم يتم الإدخال'}%0A` +
-                    `تاريخ الخروج: ${hotelDetails.checkOutDate || 'لم يتم الإدخال'}%0A` +
-                    `عدد النزلاء: ${hotelDetails.guests || '1'}%0A` +
-                    `عدد الغرف: ${hotelDetails.rooms || '1'}%0A` +
-                    `%0Aيرجى التواصل معي لإتمام الحجز.`;
+                    `الوجهة: ${hotelDetails.destination || 'لم يتم الإدخال'}` +
+                    `تاريخ الدخول: ${hotelDetails.checkInDate || 'لم يتم الإدخال'}` +
+                    `تاريخ الخروج: ${hotelDetails.checkOutDate || 'لم يتم الإدخال'}` +
+                    `عدد النزلاء: ${hotelDetails.guests || '1'}` +
+                    `عدد الغرف: ${hotelDetails.rooms || '1'}` +
+                    `يرجى التواصل معي لإتمام الحجز.`;
     window.open(`${baseWhatsappUrl}${encodeURIComponent(message)}`, '_blank');
   };
 
@@ -164,11 +164,11 @@ function App() {
   // Handle Visa request submission to WhatsApp
   const handleVisaRequest = () => {
     const message = `طلب تأشيرة جديد:%0A` +
-                    `الدولة المطلوبة: ${visaDetails.country || 'لم يتم الإدخال'}%0A` +
-                    `نوع التأشيرة: ${visaDetails.visaType || 'لم يتم الإدخال'}%0A` +
-                    `الجنسية: ${visaDetails.nationality || 'لم يتم الإدخال'}%0A` +
-                    `الغرض من السفر: ${visaDetails.purpose || 'لم يتم الإدخال'}%0A` +
-                    `%0Aيرجى التواصل معي لإتمام إجراءات التأشيرة.`;
+                    `الدولة المطلوبة: ${visaDetails.country || 'لم يتم الإدخال'}` +
+                    `نوع التأشيرة: ${visaDetails.visaType || 'لم يتم الإدخال'}` +
+                    `الجنسية: ${visaDetails.nationality || 'لم يتم الإدخال'}` +
+                    `الغرض من السفر: ${visaDetails.purpose || 'لم يتم الإدخال'}` +
+                    `يرجى التواصل معي لإتمام إجراءات التأشيرة.`;
     window.open(`${baseWhatsappUrl}${encodeURIComponent(message)}`, '_blank');
   };
 
@@ -258,64 +258,64 @@ function App() {
       icon: <Globe className="w-6 h-6 ml-2" />,
       trips: [ // 10 رحلات سياحية محددة
         {
-          title: 'دبي الساحرة، الإمارات - 4 أيام',
+          title: 'دبي الساحرة، الإمارات ',
           description: 'استمتع بناطحات السحاب، التسوق الفاخر، الصحراء، والأنشطة الترفيهية.',
           image: 'https://placehold.co/400x250/FF7F50/FFFFFF?text=دبي',
-          whatsappText: 'أود الاستفسار عن رحلة دبي الساحرة - 4 أيام',
+          whatsappText: 'أود الاستفسار عن رحلة دبي الساحرة',
         },
         {
-          title: 'إسطنبول التاريخية، تركيا - 5 أيام',
+          title: 'إسطنبول التاريخية، تركيا',
           description: 'استكشاف آيا صوفيا، المسجد الأزرق، البازار الكبير، ومضيق البوسفور.',
           image: 'https://placehold.co/400x250/6A5ACD/FFFFFF?text=إسطنبول',
-          whatsappText: 'أود الاستفسار عن رحلة إسطنبول التاريخية - 5 أيام',
+          whatsappText: 'أود الاستفسار عن رحلة إسطنبول التاريخية',
         },
         {
-          title: 'بالي الاستوائية، إندونيسيا - 7 أيام',
+          title: 'بالي الاستوائية، إندونيسيا',
           description: 'استرخاء على الشواطئ، زيارة المعابد، الغوص، والتمتع بالطبيعة الخلابة.',
           image: 'https://placehold.co/400x250/20B2AA/FFFFFF?text=بالي',
-          whatsappText: 'أود الاستفسار عن رحلة بالي الاستوائية - 7 أيام',
+          whatsappText: 'أود الاستفسار عن رحلة بالي الاستوائية',
         },
         {
-          title: 'كوالالمبور الحديثة، ماليزيا - 6 أيام',
+          title: 'كوالالمبور الحديثة، ماليزيا',
           description: 'برجاي التوأم، حدائق البحيرة، كهوف باتو، وتسوق لا يُنسى.',
           image: 'https://placehold.co/400x250/FFD700/FFFFFF?text=كوالالمبور',
-          whatsappText: 'أود الاستفسار عن رحلة كوالالمبور الحديثة - 6 أيام',
+          whatsappText: 'أود الاستفسار عن رحلة كوالالمبور الحديثة',
         },
         {
-          title: 'باريس الرومانسية، فرنسا - 5 أيام',
+          title: 'باريس الرومانسية، فرنسا',
           description: 'برج إيفل، متحف اللوفر، كاتدرائية نوتردام، وشارع الشانزليزيه.',
           image: 'https://placehold.co/400x250/FF6347/FFFFFF?text=باريس',
-          whatsappText: 'أود الاستفسار عن رحلة باريس الرومانسية - 5 أيام',
+          whatsappText: 'أود الاستفسار عن رحلة باريس الرومانسية',
         },
         {
-          title: 'روما التاريخية، إيطاليا - 6 أيام',
+          title: 'روما التاريخية، إيطاليا',
           description: 'الكولوسيوم، نافورة تريفي، الفاتيكان، وتذوق أشهى المأكولات الإيطالية.',
           image: 'https://placehold.co/400x250/4682B4/FFFFFF?text=روما',
-          whatsappText: 'أود الاستفسار عن رحلة روما التاريخية - 6 أيام',
+          whatsappText: 'أود الاستفسار عن رحلة روما التاريخية',
         },
         {
-          title: 'سنغافورة المتطورة - 4 أيام',
+          title: 'سنغافورة المتطورة',
           description: 'حدائق الخليج، جزيرة سنتوسا، وتسوق عالمي في مدينة المستقبل.',
           image: 'https://placehold.co/400x250/A2DA99/FFFFFF?text=سنغافورة',
-          whatsappText: 'أود الاستفسار عن رحلة سنغافورة المتطورة - 4 أيام',
+          whatsappText: 'أود الاستفسار عن رحلة سنغافورة المتطورة',
         },
         {
-          title: 'طوكيو النابضة، اليابان - 7 أيام',
+          title: 'طوكيو النابضة، اليابان',
           description: 'مدينة تجمع بين التقاليد العريقة والتكنولوجيا الحديثة، مع حدائق جميلة.',
           image: 'https://placehold.co/400x250/D2B48C/FFFFFF?text=طوكيو',
-          whatsappText: 'أود الاستفسار عن رحلة طوكيو النابضة - 7 أيام',
+          whatsappText: 'أود الاستفسار عن رحلة طوكيو النابضة',
         },
         {
-          title: 'جزر المالديف الساحرة - 5 أيام',
+          title: 'جزر المالديف الساحرة',
           description: 'استرخاء في منتجعات فاخرة فوق الماء، غوص ورياضات مائية في جنة استوائية.',
           image: 'https://placehold.co/400x250/87CEEB/FFFFFF?text=المالديف',
-          whatsappText: 'أود الاستفسار عن رحلة جزر المالديف الساحرة - 5 أيام',
+          whatsappText: 'أود الاستفسار عن رحلة جزر المالديف الساحرة',
         },
         {
-          title: 'القاهرة الفاطمية، مصر - 3 أيام',
+          title: 'القاهرة الفاطمية، مصر ',
           description: 'الأهرامات، خان الخليلي، المتحف المصري، رحلة نيلية، وتذوق الطعام المصري الأصيل.',
           image: 'https://placehold.co/400x250/E6B3B3/FFFFFF?text=القاهرة',
-          whatsappText: 'أود الاستفسار عن رحلة القاهرة الفاطمية - 3 أيام',
+          whatsappText: 'أود الاستفسار عن رحلة القاهرة الفاطمية ',
         },
       ],
       // Add a special entry for the AI Planner within touristTrips

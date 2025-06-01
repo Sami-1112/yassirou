@@ -33,12 +33,23 @@ const VisaRequestForm = () => {
       showMessage('error', 'الرجاء إدخال الدولة المطلوبة والجنسية لطلب التأشيرة.');
       return;
     }
-    const message = `${t.visas.whatsappText}%0A` +
-                    `${t.visas.country}: ${visaDetails.country || t.visas.notEntered}%0A` +
-                    `${t.visas.visaType}: ${visaDetails.visaType || t.visas.notEntered}%0A` +
-                    `${t.visas.nationality}: ${visaDetails.nationality || t.visas.notEntered}%0A` +
-                    `${t.visas.purpose}: ${visaDetails.purpose || t.visas.notEntered}%0A` +
-                    `%0A${t.general.contactUs}.`;
+    
+    let message = `${t.visas.whatsappText}%0A`;
+
+    if (visaDetails.country) {
+      message += `${t.visas.country}: ${visaDetails.country}%0A`;
+    }
+    if (visaDetails.visaType) { // حقل اختياري
+      message += `${t.visas.visaType}: ${visaDetails.visaType}%0A`;
+    }
+    if (visaDetails.nationality) {
+      message += `${t.visas.nationality}: ${visaDetails.nationality}%0A`;
+    }
+    if (visaDetails.purpose) { // حقل اختياري
+      message += `${t.visas.purpose}: ${visaDetails.purpose}%0A`;
+    }
+    
+    message += `%0A${t.general.contactUs}.`;
 
     window.open(`${baseWhatsappUrl}${encodeURIComponent(message)}`, '_blank');
     showMessage('success', 'تم إرسال طلب التأشيرة بنجاح!');

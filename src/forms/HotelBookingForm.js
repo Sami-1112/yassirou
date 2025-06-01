@@ -29,13 +29,21 @@ const HotelBookingForm = () => {
       return;
     }
 
-    const message = `${t.hotelBooking.whatsappText}%0A` +
-                    `${t.hotelBooking.destinationCity} ${hotelDetails.destination || t.hotelBooking.notEntered}%0A` +
-                    `${t.hotelBooking.checkInDate} ${hotelDetails.checkInDate || t.hotelBooking.notEntered}%0A` +
-                    `${t.hotelBooking.checkOutDate} ${hotelDetails.checkOutDate || t.hotelBooking.notEntered}%0A` +
-                    `${t.hotelBooking.guests} ${hotelDetails.guests || '1'}%0A` +
-                    `${t.hotelBooking.rooms} ${hotelDetails.rooms || '1'}%0A` +
-                    `%0A${t.general.contactUs}.`;
+    let message = `${t.hotelBooking.whatsappText}%0A`;
+
+    if (hotelDetails.destination) {
+      message += `${t.hotelBooking.destinationCity} ${hotelDetails.destination}%0A`;
+    }
+    if (hotelDetails.checkInDate) {
+      message += `${t.hotelBooking.checkInDate} ${hotelDetails.checkInDate}%0A`;
+    }
+    if (hotelDetails.checkOutDate) {
+      message += `${t.hotelBooking.checkOutDate} ${hotelDetails.checkOutDate}%0A`;
+    }
+    message += `${t.hotelBooking.guests} ${hotelDetails.guests}%0A`; // الضيوف والغرف دائماً لهم قيمة افتراضية
+    message += `${t.hotelBooking.rooms} ${hotelDetails.rooms}%0A`;
+
+    message += `%0A${t.general.contactUs}.`;
 
     window.open(`${baseWhatsappUrl}${encodeURIComponent(message)}`, '_blank');
     showMessage('success', 'تم إرسال طلب حجز الفندق بنجاح!');

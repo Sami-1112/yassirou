@@ -109,7 +109,7 @@ const ar = {
     departureCity: 'مدينة المغادرة:',
     arrivalCity: 'مدينة الوصول:',
     departureDate: 'تاريخ المغادرة:',
-    returnDate: 'تاريخ العودة (اختياري):',
+    returnDate: 'تاريخ العودة:',
     passengers: 'عدد الركاب:',
     departurePlaceholder: 'مثال: القاهرة',
     arrivalPlaceholder: 'مثال: دبي',

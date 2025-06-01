@@ -1,5 +1,5 @@
 // src/context/AppContext.js
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useContext } from 'react';
 import ar from '../locales/ar';
 import en from '../locales/en';
 

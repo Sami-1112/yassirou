@@ -1,13 +1,20 @@
+/* src/index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* استيراد الخطوط مباشرة هنا أو من خلال <link> في public/index.html */
+/* بما أننا سنستخدم <link> في public/index.html، يمكن إزالة هذا الجزء إذا لم تكن هناك حاجة أخرى */
+/* @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap'); */
+
 body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: 'Inter', sans-serif;
+  direction: rtl; /* لضمان اتجاه النص من اليمين لليسار بشكل افتراضي */
+  text-align: right; /* لضمان محاذاة النص لليمين بشكل افتراضي */
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+/* override default text alignment for specific elements if needed */
+.ltr-text {
+  direction: ltr;
+  text-align: left;
 }

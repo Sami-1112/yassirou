@@ -1,5 +1,5 @@
 // src/hooks/useLocale.js
-import { useAppContext } from '../context/AppContext';
+import useLocale from '../hooks/useLocale'; // 
 
 // هوك مخصص لسهولة الوصول إلى وظائف الترجمة واللغة
 const useLocale = () => {

@@ -1,7 +1,3 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&family=Inter:wght@400;700&display=swap');
 
 body, html {
@@ -12,10 +8,6 @@ body, html {
 .input {
   @apply shadow border rounded-lg w-full py-2 px-3 text-gray-700 dark:text-gray-100 bg-white dark:bg-[#19182d] leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-500 transition;
 }
-/* src/index.css */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
 /* استيراد الخطوط مباشرة هنا أو من خلال <link> في public/index.html */
 /* بما أننا سنستخدم <link> في public/index.html، يمكن إزالة هذا الجزء إذا لم تكن هناك حاجة أخرى */

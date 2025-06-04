@@ -1,6 +1,6 @@
 // src/hooks/useLocale.js
 import React from 'react'; // تأكد من استيراد React
-import { useAppContext } from './useAppContext'; // تأكد من المسار الصحيح لـ useAppContext
+import { useAppContext } from '../context/useAppContext'; // تأكد من المسار الصحيح لـ useAppContext
 
 /**
  * هوك مخصص (Custom Hook) لسهولة الوصول إلى وظائف الترجمة واللغة

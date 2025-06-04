@@ -1,71 +1,19 @@
-import React, { useState } from 'react';
+// src/forms/FlightBookingForm.js
+import React from 'react';
+import useTranslation from '../hooks/useTranslation';
 import { MessageSquare } from 'lucide-react';
-import { useAppContext } from '../context/AppContext';
 
-const FlightBookingForm = () => {
-  const { t, showMessage } = useAppContext();
-  const baseWhatsappUrl = "https://wa.me/+201507000933?text=";
-
-  const [flightDetails, setFlightDetails] = useState({
-    departure: '',
-    arrival: '',
-    departureDate: '',
-    returnDate: '',
-    passengers: 1,
-  });
-
-  const handleFlightChange = (e) => {
-    const { name, value } = e.target;
-    setFlightDetails(prevDetails => ({
-      ...prevDetails,
-      [name]: value,
-    }));
-  };
-
-  const handleFlightRequest = () => {
-    if (!flightDetails.departure || !flightDetails.arrival || !flightDetails.departureDate) {
-      showMessage('error', 'الرجاء ملء جميع الحقول المطلوبة (مدينة المغادرة، مدينة الوصول، تاريخ المغادرة).');
-      return;
-    }
-
-    let messageParts = []; // سنجمع أجزاء الرسالة هنا
-
-    messageParts.push(t.flightBooking.whatsappText); // بداية الرسالة
-
-    // إضافة التفاصيل فقط إذا كانت موجودة
-    if (flightDetails.departure) {
-      messageParts.push(`${t.flightBooking.departureCity}: ${flightDetails.departure}`);
-    }
-    if (flightDetails.arrival) {
-      messageParts.push(`${t.flightBooking.arrivalCity}: ${flightDetails.arrival}`);
-    }
-    if (flightDetails.departureDate) {
-      messageParts.push(`${t.flightBooking.departureDate}: ${flightDetails.departureDate}`);
-    }
-    if (flightDetails.returnDate) {
-  messageParts.push(`${t.flightBooking.returnDate}: ${flightDetails.returnDate}`);
-}
-    // عدد الركاب دائماً موجود بقيمة افتراضية 1
-    messageParts.push(`${t.flightBooking.passengers}: ${flightDetails.passengers}`);
-
-    messageParts.push(''); // سطر فارغ للفصل
-    messageParts.push(t.general.contactUs); // إضافة جملة التواصل في النهاية
-
-    // دمج الأجزاء معًا باستخدام %0A (سطر جديد) بعد تشفير كل جزء
-    const finalMessage = messageParts.map(part => encodeURIComponent(part)).join('%0A');
-
-    window.open(`${baseWhatsappUrl}${finalMessage}`, '_blank');
-    showMessage('success', 'تم إرسال طلب حجز الطيران بنجاح!');
-  };
+const FlightBookingForm = ({ flightDetails, handleFlightChange, handleFlightRequest }) => {
+  const t = useTranslation();
 
   return (
     <div className="p-6 bg-gray-50 rounded-lg shadow-inner">
-      <h3 className="text-2xl font-semibold text-indigo-700 mb-4 text-center">{t.flightBooking.formTitle}</h3>
-      <p className="text-center text-gray-600 mb-6">{t.flightBooking.formDescription}</p>
+      <h3 className="text-2xl font-semibold text-indigo-700 mb-4 text-center">{t('flightBooking.formTitle')}</h3>
+      <p className="text-center text-gray-600 mb-6">{t('flightBooking.formDescription')}</p>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
         <div>
           <label htmlFor="departure" className="block text-gray-700 text-sm font-bold mb-2">
-            {t.flightBooking.departureCity}
+            {t('flightBooking.departureCityLabel')}
           </label>
           <input
             type="text"
@@ -73,13 +21,13 @@ const FlightBookingForm = () => {
             name="departure"
             value={flightDetails.departure}
             onChange={handleFlightChange}
-            placeholder={t.flightBooking.departurePlaceholder}
+            placeholder={t('flightBooking.departurePlaceholder')}
             className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
           />
         </div>
         <div>
           <label htmlFor="arrival" className="block text-gray-700 text-sm font-bold mb-2">
-            {t.flightBooking.arrivalCity}
+            {t('flightBooking.arrivalCityLabel')}
           </label>
           <input
             type="text"
@@ -87,13 +35,13 @@ const FlightBookingForm = () => {
             name="arrival"
             value={flightDetails.arrival}
             onChange={handleFlightChange}
-            placeholder={t.flightBooking.arrivalPlaceholder}
+            placeholder={t('flightBooking.arrivalPlaceholder')}
             className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
           />
         </div>
         <div>
           <label htmlFor="departureDate" className="block text-gray-700 text-sm font-bold mb-2">
-            {t.flightBooking.departureDate}
+            {t('flightBooking.departureDateLabel')}
           </label>
           <input
             type="date"
@@ -106,7 +54,7 @@ const FlightBookingForm = () => {
         </div>
         <div>
           <label htmlFor="returnDate" className="block text-gray-700 text-sm font-bold mb-2">
-            {t.flightBooking.returnDate}
+            {t('flightBooking.returnDateLabel')}
           </label>
           <input
             type="date"
@@ -117,9 +65,9 @@ const FlightBookingForm = () => {
             className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
           />
         </div>
-        <div className="md:col-span-2">
+        <div>
           <label htmlFor="passengers" className="block text-gray-700 text-sm font-bold mb-2">
-            {t.flightBooking.passengers}
+            {t('flightBooking.passengersLabel')}
           </label>
           <input
             type="number"
@@ -131,13 +79,53 @@ const FlightBookingForm = () => {
             className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
           />
         </div>
+        {/* Optional airline selection field */}
+        <div>
+          <label htmlFor="airline" className="block text-gray-700 text-sm font-bold mb-2">
+            {t('flightBooking.preferredAirlineLabel')}
+          </label>
+          <select
+            id="airline"
+            name="airline"
+            value={flightDetails.airline}
+            onChange={handleFlightChange}
+            className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
+          >
+            <option value="">{t('flightBooking.selectAirlinePlaceholder')}</option>
+            <option value="مصر للطيران">{t('flightBooking.egyptAir')}</option>
+            <option value="الخطوط السعودية">{t('flightBooking.saudiAirlines')}</option>
+            <option value="طيران الإمارات">{t('flightBooking.emirates')}</option>
+            <option value="الخطوط الجوية القطرية">{t('flightBooking.qatarAirways')}</option>
+            <option value="الخطوط التركية">{t('flightBooking.turkishAirlines')}</option>
+            <option value="لوفتهانزا">{t('flightBooking.lufthansa')}</option>
+            <option value="الخطوط الجوية البريطانية">{t('flightBooking.britishAirways')}</option>
+            <option value="أخرى">{t('flightBooking.other')}</option>
+          </select>
+        </div>
+        {/* Conditional rendering for custom airline input */}
+        {flightDetails.airline === 'أخرى' && (
+          <div>
+            <label htmlFor="customAirline" className="block text-gray-700 text-sm font-bold mb-2">
+              {t('flightBooking.customAirlineName')}
+            </label>
+            <input
+              type="text"
+              id="customAirline"
+              name="customAirline"
+              value={flightDetails.customAirline}
+              onChange={handleFlightChange}
+              placeholder={t('flightBooking.customAirlinePlaceholder')}
+              className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
+            />
+          </div>
+        )}
       </div>
       <button
         onClick={handleFlightRequest}
         className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-full shadow-lg flex items-center justify-center transform transition-all duration-300 ease-in-out hover:scale-105"
       >
         <MessageSquare className="w-5 h-5 ml-2" />
-        {t.flightBooking.button}
+        {t('flightBooking.sendRequestButton')}
       </button>
     </div>
   );

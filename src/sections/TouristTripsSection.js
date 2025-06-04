@@ -1,159 +1,149 @@
 // src/sections/TouristTripsSection.js
-import React, { useState } from 'react';
-import { MessageSquare, Sparkles } from 'lucide-react';
-import { useAppContext } from '../context/AppContext';
-import { callGeminiApi } from '../utils/api';
-import LoadingSpinner from '../components/common/LoadingSpinner';
+import React from 'react';
+import useTranslation from '../hooks/useTranslation';
+import { Sparkles } from 'lucide-react';
+import MessageDisplay from '../components/MessageDisplay'; // Import MessageDisplay
 
-const TouristTripsSection = () => {
-  const { t, showMessage } = useAppContext();
-  const baseWhatsappUrl = "https://wa.me/+201507000933?text="; // رقم الواتساب ثابت
+const TouristTripsSection = ({
+  aiTripDetails,
+  setAiTripDetails,
+  aiItinerary,
+  isAiLoading,
+  aiError,
+  generateAiItinerary,
+  setAiError // Pass setAiError to clear messages
+}) => {
+  const t = useTranslation();
 
-  const [aiTripDetails, setAiTripDetails] = useState({
-    destination: '',
-    days: 3,
-    interests: '',
-  });
-  const [aiItinerary, setAiItinerary] = useState('');
-  const [isAiLoading, setIsAiLoading] = useState(false);
+  const suggestions = [
+    {
+      title: t('touristTrips.exploreCitiesTitle'),
+      description: t('touristTrips.exploreCitiesDescription'),
+      image: 'https://images.unsplash.com/photo-1501700493521-8727192a0d78?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', // Cityscape
+    },
+    {
+      title: t('touristTrips.natureAdventuresTitle'),
+      description: t('touristTrips.natureAdventuresDescription'),
+      image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', // Beach/Nature
+    },
+    {
+      title: t('touristTrips.culturalTripsTitle'),
+      description: t('touristTrips.culturalTripsDescription'),
+      image: 'https://images.unsplash.com/photo-1552055660-42861c8d1976?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', // Historical/Cultural
+    },
+    {
+      title: t('touristTrips.familyDestinationsTitle'),
+      description: t('touristTrips.familyDestinationsDescription'),
+      image: 'https://images.unsplash.com/photo-1528659846059-86923c577045?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', // Family travel
+    },
+  ];
 
-  const handleAiTripChange = (e) => {
-    const { name, value } = e.target;
+  // Clear AI error when input changes
+  const onAiTripChange = (e) => {
     setAiTripDetails(prevDetails => ({
       ...prevDetails,
-      [name]: value,
+      [e.target.name]: e.target.value,
     }));
-  };
-
-  const generateAiItinerary = async () => {
-    const { destination, days, interests } = aiTripDetails;
-
-    if (!destination || !days) {
-      showMessage('error', t.touristTrips.aiPlanner.inputError);
-      return;
-    }
-
-    setIsAiLoading(true);
-    setAiItinerary('');
-    showMessage(null, null); // Clear previous messages
-
-    const prompt = `Generate a detailed travel itinerary for a ${days}-day trip to ${destination}. Focus on ${interests || 'general sightseeing and culture'}. Provide daily activities, suggested meals, and key attractions. Format the response clearly, starting each day with 'اليوم X:' (Day X:) and **use Arabic language for the itinerary.**`;
-
-    try {
-      const text = await callGeminiApi(prompt);
-      setAiItinerary(text);
-      showMessage('success', 'تم توليد خطة الرحلة بنجاح!');
-    } catch (error) {
-      showMessage('error', t.general.apiError);
-      console.error('Error in AI Trip Planner:', error);
-    } finally {
-      setIsAiLoading(false);
-    }
+    setAiError('');
   };
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {/* بطاقة مخطط الذكاء الاصطناعي */}
+      {/* AI Trip Planner Card */}
       <div className="bg-purple-100 rounded-lg shadow-md overflow-hidden transform transition-transform duration-300 hover:scale-105 border-2 border-purple-400">
         <img
-          src={t.touristTrips.aiPlanner.image || `https://placehold.co/400x250/9333EA/FFFFFF?text=${t.general.imageNotAvailable}`}
-          alt={t.touristTrips.aiPlanner.title}
-          className="w-full h-40 object-cover"
-          onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/400x250/CCCCCC/000000?text=${t.general.imageNotAvailable}`; }}
+          src="https://images.unsplash.com/photo-1552589088-75704b2b4d93?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          alt={t('touristTrips.aiPlannerTitle')}
+          className="w-full h-40 object-cover transform transition-transform duration-300 hover:scale-110"
+          onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/400x250/CCCCCC/000000?text=صورة+غير+متوفرة`; }}
         />
         <div className="p-4">
-          <h3 className="text-xl font-semibold text-purple-800 mb-2">{t.touristTrips.aiPlanner.title}</h3>
-          <p className="text-gray-700 text-sm mb-4">{t.touristTrips.aiPlanner.description}</p>
-
-          {/* نموذج مخطط الذكاء الاصطناعي */}
+          <h3 className="text-xl font-semibold text-purple-800 mb-2">{t('touristTrips.aiPlannerTitle')}</h3>
+          <p className="text-gray-700 text-sm mb-4">{t('touristTrips.aiPlannerDescription')}</p>
+          
           <div className="space-y-3 mb-4">
             <div>
               <label htmlFor="aiDestination" className="block text-gray-700 text-xs font-bold mb-1">
-                {t.touristTrips.aiPlanner.destinationLabel}
+                {t('touristTrips.destinationLabel')}
               </label>
               <input
                 type="text"
                 id="aiDestination"
                 name="destination"
                 value={aiTripDetails.destination}
-                onChange={handleAiTripChange}
-                placeholder={t.touristTrips.aiPlanner.destinationPlaceholder}
-                className="shadow-sm appearance-none border rounded-lg w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:ring-1 focus:ring-purple-500 transition duration-200 text-sm"
+                onChange={onAiTripChange}
+                placeholder={t('touristTrips.destinationPlaceholder')}
+                className="shadow-sm appearance-none border rounded-lg w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent transition duration-200"
               />
             </div>
             <div>
               <label htmlFor="aiDays" className="block text-gray-700 text-xs font-bold mb-1">
-                {t.touristTrips.aiPlanner.daysLabel}
+                {t('touristTrips.daysLabel')}
               </label>
               <input
                 type="number"
                 id="aiDays"
                 name="days"
                 value={aiTripDetails.days}
-                onChange={handleAiTripChange}
+                onChange={onAiTripChange}
                 min="1"
-                className="shadow-sm appearance-none border rounded-lg w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:ring-1 focus:ring-purple-500 transition duration-200 text-sm"
+                className="shadow-sm appearance-none border rounded-lg w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent transition duration-200"
               />
             </div>
             <div>
               <label htmlFor="aiInterests" className="block text-gray-700 text-xs font-bold mb-1">
-                {t.touristTrips.aiPlanner.interestsLabel}
+                {t('touristTrips.interestsLabel')}
               </label>
               <input
                 type="text"
                 id="aiInterests"
                 name="interests"
                 value={aiTripDetails.interests}
-                onChange={handleAiTripChange}
-                placeholder={t.touristTrips.aiPlanner.interestsPlaceholder}
-                className="shadow-sm appearance-none border rounded-lg w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:ring-1 focus:ring-purple-500 transition duration-200 text-sm"
+                onChange={onAiTripChange}
+                placeholder={t('touristTrips.interestsPlaceholder')}
+                className="shadow-sm appearance-none border rounded-lg w-full py-1.5 px-2 text-gray-700 leading-tight focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent transition duration-200"
               />
             </div>
           </div>
-
           <button
             onClick={generateAiItinerary}
-            className="w-full bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 transition-colors duration-300 flex items-center justify-center font-medium"
+            className="w-full bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 transform hover:scale-105 transition-all duration-300 ease-in-out flex items-center justify-center font-medium"
             disabled={isAiLoading}
           >
             {isAiLoading ? (
-              <LoadingSpinner color="text-white" />
+              <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
             ) : (
               <Sparkles className="w-5 h-5 ml-2" />
             )}
-            {isAiLoading ? t.touristTrips.aiPlanner.loading : t.touristTrips.aiPlanner.button}
+            {isAiLoading ? t('touristTrips.planningInProgress') : t('touristTrips.generatePlanButton')}
           </button>
+
+          <MessageDisplay message={aiError} type="error" />
 
           {aiItinerary && (
             <div className="mt-4 p-3 bg-white rounded-lg border border-purple-200 text-gray-800 text-sm whitespace-pre-wrap max-h-60 overflow-y-auto">
-              <h4 className="font-semibold text-purple-700 mb-2">{t.touristTrips.aiPlanner.resultTitle}</h4>
+              <h4 className="font-semibold text-purple-700 mb-2">{t('touristTrips.suggestedPlan')}</h4>
               {aiItinerary}
             </div>
           )}
         </div>
       </div>
 
-      {/* الرحلات السياحية المحددة */}
-      {t.touristTrips.trips.map((trip, index) => (
-        <div key={index} className="bg-gray-50 rounded-lg shadow-md overflow-hidden transform transition-transform duration-300 hover:scale-105">
+      {/* General Tourist Trip Suggestions */}
+      {suggestions.map((item, index) => (
+        <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden transform transition-transform duration-300 hover:scale-105">
           <img
-            src={trip.image || `https://placehold.co/400x250/CCCCCC/000000?text=${t.general.imageNotAvailable}`}
-            alt={trip.title}
-            className="w-full h-40 object-cover"
-            onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/400x250/CCCCCC/000000?text=${t.general.imageNotAvailable}`; }}
+            src={item.image}
+            alt={item.title}
+            className="w-full h-40 object-cover transform transition-transform duration-300 hover:scale-110" // Image hover effect
+            onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/400x250/CCCCCC/000000?text=صورة+غير+متوفرة`; }}
           />
           <div className="p-4">
-            <h3 className="text-xl font-semibold text-indigo-800 mb-2">{trip.title}</h3>
-            <p className="text-gray-700 text-sm">{trip.description}</p>
-            <a
-              href={`${baseWhatsappUrl}${encodeURIComponent(trip.whatsappText)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-4 w-full bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 transition-colors duration-300 flex items-center justify-center"
-            >
-              <MessageSquare className="w-5 h-5 ml-2" />
-              {t.touristTrips.tripContactButton}
-            </a>
+            <h3 className="text-xl font-semibold text-indigo-700 mb-2">{item.title}</h3>
+            <p className="text-gray-700 text-sm mb-4">{item.description}</p>
           </div>
         </div>
       ))}

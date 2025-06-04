@@ -1,6 +1,6 @@
 // src/hooks/useLocale.js
 import React from 'react'; // تأكد من استيراد React
-import { useAppContext } from '../context/useAppContext'; // تأكد من المسار الصحيح لـ useAppContext
+import { AppContext } from '../context/AppContext'; // تأكد من المسار الصحيح لـ AppContext
 
 /**
  * هوك مخصص (Custom Hook) لسهولة الوصول إلى وظائف الترجمة واللغة
@@ -12,6 +12,6 @@ import { useAppContext } from '../context/useAppContext'; // تأكد من ال�
  * - t: دالة الترجمة (ترجع النص المترجم حسب اللغة الحالية).
  */
 export const useLocale = () => {
-  const { locale, toggleLocale, t } = useAppContext();
+  const { locale, toggleLocale, t } = AppContext();
   return { locale, toggleLocale, t };
 };
